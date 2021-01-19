@@ -25,7 +25,7 @@ class EmployeeController extends AbstractController
         return new Response('Saved new employee with id '.$emp->getId());
     }
     /**
-     * @Route("/employee/{id}", name="product_show")
+     * @Route("/employee/{id}", name="employee_show")
      */
     public function show(int $id): Response
     {
@@ -40,5 +40,46 @@ class EmployeeController extends AbstractController
         }
 
         return new Response('Employee: '.$emp->getName());
+    }
+    /**
+     * @Route("/employee/edit/{id}")
+     */
+    public function update(int $id): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $emp = $entityManager->getRepository(Employee::class)->find($id);
+
+        if (!$emp) {
+            throw $this->createNotFoundException(
+                'No employee found for id '.$id
+            );
+        }
+
+        $emp->setName('Karan');
+        $entityManager->persist($emp);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('employee_show', [
+            'id' => $emp->getId()
+        ]);
+    }
+    /**
+     * @Route("/employee/delete/{id}")
+     */
+    public function delete(int $id): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $emp = $entityManager->getRepository(Employee::class)->find($id);
+
+        if (!$emp) {
+            throw $this->createNotFoundException(
+                'No employee found for id '.$id
+            );
+        }
+
+        $entityManager->remove($emp);
+        $entityManager->flush();
+
+      return new Response('Object Deleted');
     }
 }
