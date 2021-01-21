@@ -6,23 +6,36 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Employee;
+use Symfony\Component\HttpFoundation\Request;
+use App\Form\Type\EmployeeType;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class EmployeeController extends AbstractController
 {
     /**
      * @Route("/employee", name="employee")
      */
-    public function addEmployee(): Response
+    public function addEmployee(Request $request,UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $emp = new Employee();
-        $emp->setName('Arjun');
-        $emp->setAge(24);
-        $emp->setSalary(30000);
-        $emp->setDepartment('Research');
+       
+        $form=$this->createForm(EmployeeType::class,$emp);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $emp->setPassword(
+                $passwordEncoder->encodePassword(
+                    $emp,
+                    $form->get('plainPassword')->getData()
+                )
+            );
         $entityManager->persist($emp);
         $entityManager->flush();
-        return new Response('Saved new employee with id '.$emp->getId());
+        }
+        $emp = new Employee();
+        $form=$this->createForm(EmployeeType::class,$emp);
+        return $this->render('employe\new.html.twig',['form'=>$form->createView()]);
     }
     /**
      * @Route("/employee/{id}", name="employee_show")

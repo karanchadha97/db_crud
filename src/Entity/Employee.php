@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\EmployeeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
  */
-class Employee
+class Employee implements UserInterface
 {
     /**
      * @ORM\Id
@@ -36,6 +37,20 @@ class Employee
      * @ORM\Column(type="string", length=50)
      */
     private $department;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $Email;
+
+    /**
+     * @ORM\Column(type="string", length=250)
+     */
+    private $Password;
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $roles=[];
 
     public function getId(): ?int
     {
@@ -87,6 +102,56 @@ class Employee
     {
         $this->department = $department;
 
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->Email;
+    }
+
+    public function setEmail(string $Email): self
+    {
+        $this->Email = $Email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->Password;
+    }
+
+    public function setPassword(string $Password): self
+    {
+        $this->Password = $Password;
+
+        return $this;
+    }
+    public function getSalt()
+    {
+
+    }
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+    public function getRoles()
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+    public function getUsername()
+    {
+        return $this->Email;
+    }
+    public function setRoles(array $roles): ?self
+    {
+        $this->roles=$roles;
         return $this;
     }
 }

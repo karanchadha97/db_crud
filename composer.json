@@ -29,7 +29,7 @@
         "symfony/notifier": "*",
         "symfony/process": "*",
         "symfony/proxy-manager-bridge": "5.2.*",
-        "symfony/security-bundle": "*",
+        "symfony/security-bundle": "5.2.*",
         "symfony/serializer-pack": "*",
         "symfony/string": "*",
         "symfony/translation": "*",
